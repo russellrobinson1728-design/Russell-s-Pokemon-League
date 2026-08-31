@@ -1,1 +1,27 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="96" height="128" viewBox="0 0 24 32" shape-rendering="crispEdges"><rect width="24" height="32" fill="none"/><path fill="#1b1c24" d="M8 3h8v1h2v3h1v5h-2v2h-1v1h-6v-1H8v-2H6V7h1V5h1z"/><path fill="#d9a77c" d="M9 7h6v1h2v5h-2v2H9v-2H7V9h2z"/><path fill="#11131a" d="M8 6h8v2h2V6h-1V4h-2V3H9v1H8z"/><path fill="#303746" d="M8 15h8l3 3v7h-3v-5h-1v4h-5v-4H9v5H6v-7z"/><path fill="#171a22" d="M8 16h8l3 3-2 4h-2v-3h-2v3h-3v-3H8v3H6v-4z"/><path fill="#263a5c" d="M9 22h6v5h-2v3h-4zM15 22h3v5h-1v3h-3v-3h1z"/><path fill="#6f4d31" d="M6 18h2v6H7v2H5v-3h1z"/><path fill="#6f4d31" d="M17 18h2v5h-1v3h-2v-2h1z"/><path fill="#222631" d="M8 29h4v2H7v-1zM15 29h4v2h-5v-1z"/><path fill="#4d3427" d="M7 17h2v2H7zM17 17h2v2h-2z"/><path fill="#fff" d="M10 10h1v1h-1zM14 10h1v1h-1z"/><path fill="#263a5c" d="M6 19h2v1H6zM18 19h2v1h-2z"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 96" shape-rendering="crispEdges">
+<rect width="80" height="96" fill="none"/>
+<!-- shadow -->
+<rect x="17" y="89" width="46" height="3" fill="#8fa7ba"/>
+<!-- hair -->
+<path fill="#20283a" d="M20 14h5V9h30v5h6v6h5v21H57V28H52v-6H27v6H21v17H13V25h4v-7h3z"/>
+<path fill="#3a465d" d="M25 10h27v5h7v9H25z"/>
+<!-- face -->
+<path fill="#e9b78c" d="M26 26h28v4h6v22h-6v7H26v-4h-6V32h6z"/>
+<rect x="31" y="38" width="5" height="4" fill="#263147"/>
+<rect x="46" y="38" width="5" height="4" fill="#263147"/>
+<rect x="36" y="49" width="11" height="3" fill="#9b5b53"/>
+<!-- collar/neck -->
+<rect x="34" y="56" width="12" height="7" fill="#e9b78c"/>
+<!-- jacket -->
+<path fill="#2f629b" d="M28 61h24l11 8v21H17V69z"/>
+<path fill="#183d69" d="M28 63h7v27h-7zM45 63h7v27h-7z"/>
+<path fill="#e9eef2" d="M35 62h10v28H35z"/>
+<path fill="#f2c95d" d="M36 65h8v3h-8z"/>
+<!-- arms/hands -->
+<path fill="#2f629b" d="M17 70h11v20H17zM52 70h11v20H52z"/>
+<rect x="15" y="84" width="14" height="7" fill="#e9b78c"/>
+<rect x="51" y="84" width="14" height="7" fill="#e9b78c"/>
+<!-- trousers/shoes -->
+<path fill="#26374d" d="M27 90h10v5H27zM44 90h11v5H44z"/>
+<path fill="#14253b" d="M23 94h15v2H23zM43 94h16v2H43z"/>
+</svg>
