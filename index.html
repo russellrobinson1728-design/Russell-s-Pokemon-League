@@ -14,7 +14,38 @@
 <section class="page" id="page-inventory"><section class="card panel"><div class="title"><h2>🎒 Key Items</h2></div><div class="items" id="items"></div></section></section>
 <section class="page" id="page-rewards"><section class="card panel"><div class="title"><h2>🎁 Reward Shop</h2><span class="muted">Coins are for rewards you choose in advance.</span></div><div class="rewards" id="rewards"></div></section></section>
 <section class="page" id="page-trainer"><section class="card panel"><div class="title"><h2>Trainer Card</h2></div><div class="grid" style="grid-template-columns:1fr 1fr"><div><div class="statline"><span>Level</span><b id="tcLevel"></b></div><div class="statline"><span>Total XP</span><b id="tcXP"></b></div><div class="statline"><span>Quests completed</span><b id="tcQ"></b></div><div class="statline"><span>Badges earned</span><b id="tcB"></b></div></div><div><div class="statline"><span>League Coins</span><b id="tcC"></b></div><div class="statline"><span>Longest streak</span><b id="tcS"></b></div></div></div></section><section class="card panel"><div class="title"><h2>Daily Journal</h2><span class="muted">Autosaves</span></div><textarea id="journal" style="width:100%;min-height:140px;background:#09111e;color:#fff;border:1px solid var(--line);border-radius:10px;padding:12px" placeholder="What did you learn, build, improve, experience, or overcome today?"></textarea></section></section>
-<section class="page" id="page-sync"><section class="card panel"><div class="title"><h2>☁ Cross-Device Sync</h2><span class="muted">PC ↔ Phone</span></div><p class="muted">Local browser storage cannot sync between devices by itself. This page connects the same save to Supabase so your PC and phone can share it.</p><div class="syncbox"><div class="field"><label>Supabase Project URL</label><input id="surl" placeholder="https://your-project.supabase.co"></div><div class="field"><label>Supabase anon/public key</label><input id="skey" placeholder="eyJ..."></div><div class="field"><label>Trainer ID</label><input id="tid" placeholder="russ"></div><div><button class="btn primary" id="connect">Connect & Push</button> <button class="btn" id="pull">Pull Cloud Save</button></div><div id="syncstatus" class="offline">Not connected</div></div></section><section class="card panel"><h2 style="font:900 20px Georgia,serif;color:var(--gold)">One-time setup</h2><ol class="muted"><li>Create a Supabase project.</li><li>Open SQL Editor and run the SQL in the included README.</li><li>Copy Project URL and anon/public key from Project Settings → API.</li><li>Paste them here on PC and phone, using the same Trainer ID.</li></ol></section></section>
+<section class="page" id="page-sync">
+<section class="card panel">
+<div class="title"><h2>☁ Cross-Device Sync</h2><span class="muted">PC ↔ Phone</span></div>
+<div class="syncbox">
+<p class="muted">Supabase is your shared cloud save. <b>Save Connection</b> only stores the connection details. It does not upload anything. Use <b>Push Local Save</b> to deliberately make this device's save the cloud copy, or <b>Pull Cloud Save</b> to replace this device's local save with the cloud copy.</p>
+<div class="field"><label>Supabase Project URL</label><input id="surl" placeholder="https://your-project.supabase.co"></div>
+<div class="field"><label>Supabase publishable/anon key</label><input id="skey" placeholder="sb_publishable_..."></div>
+<div class="field"><label>Trainer ID</label><input id="tid" placeholder="russ"></div>
+<div style="display:flex;gap:7px;flex-wrap:wrap">
+<button class="btn primary" id="connect">Save Connection</button>
+<button class="btn" id="pull">Pull Cloud Save</button>
+<button class="btn" id="push">Push Local Save</button>
+</div>
+<div id="syncstatus" class="offline">Not connected</div>
+</div>
+</section>
+<section class="card panel">
+<h2 style="font:900 20px Georgia,serif;color:var(--gold)">Recommended first-time setup</h2>
+<ol class="muted">
+<li>On the device that contains the progress you want to keep, enter the URL, key and Trainer ID, then press <b>Save Connection</b>.</li>
+<li>Press <b>Push Local Save</b> once. This creates/updates the cloud copy.</li>
+<li>On your other device, enter the same details and press <b>Save Connection</b>.</li>
+<li>Press <b>Pull Cloud Save</b>. This downloads the good save onto that device.</li>
+<li>After both devices have the same save, changes will auto-push after a short delay.</li>
+</ol>
+<p class="muted"><b>Important:</b> Pull replaces this device's local save with the cloud save. Push replaces the cloud save with this device's local save. Saving the connection itself never overwrites either copy.</p>
+</section>
+<section class="card panel">
+<h2 style="font:900 20px Georgia,serif;color:var(--gold)">Supabase setup</h2>
+<p class="muted">Use your Project URL without <b>/rest/v1/</b> and use the <b>publishable/anon</b> key, never a secret/service-role key. The SQL for the <b>trainer_saves</b> table and RLS policies is included in README.md.</p>
+</section>
+</section>
 </div>
 <div class="modal" id="modal"><div class="card modalinner"><h2 id="mtitle" style="font:900 22px Georgia,serif;color:var(--gold)"></h2><div id="mbody"></div><div style="display:flex;justify-content:flex-end;gap:8px;margin-top:14px"><button class="btn" id="mcancel">Cancel</button><button class="btn primary" id="msave">Save</button></div></div></div><div class="toast" id="toast"></div>
 <script>
@@ -24,7 +55,14 @@ const BADGES=[['foundation','Foundation','🪨','Physical resilience, energy and
 const P=[['Eevee','Umbreon','Stability','foundation',[[133,'Eevee',1],[197,'Umbreon',10]]],['Zorua','Zoroark','Adaptability','dark',[[570,'Zorua',1],[571,'Zoroark',12]]],['Sneasel','Weavile','Drive','volt',[[215,'Sneasel',1],[461,'Weavile',14]]],['Deino','Hydreigon','Curiosity & Ambition','mind',[[633,'Deino',1],[634,'Zweilous',16],[635,'Hydreigon',30]]],['Gible','Garchomp','Mastery','dragon',[[443,'Gible',1],[444,'Gabite',18],[445,'Garchomp',35]]],['Pawniard','Kingambit','Leadership', 'crown',[[624,'Pawniard',1],[625,'Bisharp',20],[983,'Kingambit',40]]]];
 const REW=[['Small Reward',50,'Snack, coffee, small hobby purchase, or guilt-free gaming session.'],['Good Reward',150,'Movie, meal out, book, or modest experience you genuinely value.'],['Rare Reward',300,'A meaningful purchase or experience chosen before you earn it.'],['Ultra Reward',600,'A substantial reward reserved for a substantial period of effort.']];
 const fresh=()=>({xp:0,coins:0,days:{},custom:[],badge:{},levels:{},items:[],goals:{},notes:{},longest:0,trainerId:'russ'});let s=Object.assign(fresh(),JSON.parse(localStorage.getItem(KEY)||'{}'));let month=new Date(new Date().getFullYear(),new Date().getMonth(),1);let cfg=JSON.parse(localStorage.getItem('russSync')||'{}');
-const qAll=()=>CORE.map(x=>({id:x[0],name:x[1],desc:x[2],xp:10,badges:x[3]})).concat(s.custom||[]);const daykey=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');const today=()=>daykey(new Date());const save=()=>{localStorage.setItem(KEY,JSON.stringify(s));if(cfg.url&&cfg.key)debounce()};let pt;const debounce=()=>{clearTimeout(pt);pt=setTimeout(push,1200)};const lvl=()=>Math.floor(s.xp/100)+1;const bl=id=>Math.min(3,Math.floor(Math.min(60,s.badge[id]||0)/20));const bp=id=>Math.min(60,s.badge[id]||0);const esc=x=>String(x??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+const qAll=()=>CORE.map(x=>({id:x[0],name:x[1],desc:x[2],xp:10,badges:x[3]})).concat(s.custom||[]);
+const daykey=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const today=()=>daykey(new Date());
+let cloudReady=false;
+const save=()=>{localStorage.setItem(KEY,JSON.stringify(s));if(cfg.url&&cfg.key&&cloudReady)debounce()};
+let pt;
+const debounce=()=>{clearTimeout(pt);pt=setTimeout(()=>push(false),1500)};
+const lvl=()=>Math.floor(s.xp/100)+1;const bl=id=>Math.min(3,Math.floor(Math.min(60,s.badge[id]||0)/20));const bp=id=>Math.min(60,s.badge[id]||0);const esc=x=>String(x??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 function toast(t){let x=document.getElementById('toast');x.textContent=t;x.classList.add('show');setTimeout(()=>x.classList.remove('show'),2200)}function streak(){let n=0,d=new Date();while((s.days[daykey(d)]&&qAll().some(q=>s.days[daykey(d)][q.id]))){n++;d.setDate(d.getDate()-1)}return n}function apply(q,on){let r=s.days[today()]||(s.days[today()]={});if(!!r[q.id]===on)return;r[q.id]=on;s.xp=Math.max(0,s.xp+(on?q.xp:-q.xp));for(let id of q.badges)s.badge[id]=Math.max(0,(s.badge[id]||0)+(on?1:-1));for(let b of BADGES){let old=s.levels[b[0]]||0,n=bl(b[0]);if(n>old){s.coins+=(n-old)*25;s.levels[b[0]]=n;if(n===3&&!s.items.includes(b[4]))s.items.push(b[4]);toast(b[1]+' Badge Level '+n+' reached • +25 coins')}}save();render()}
 function questHTML(q){let done=!!(s.days[today()]||{})[q.id];return `<label class="quest ${done?'done':''}"><input type="checkbox" ${done?'checked':''} data-q="${q.id}"><div class="q"><div class="qname">${esc(q.name)}</div><div class="qdesc">${esc(q.desc)}</div></div><div class="qxp">+${q.xp} XP</div></label>`}
 function renderQuests(){let h=qAll().map(questHTML).join('');for(let id of ['homequests','questlist']){let r=document.getElementById(id);r.innerHTML=h;r.querySelectorAll('[data-q]').forEach(x=>x.onchange=()=>apply(qAll().find(q=>q.id===x.dataset.q),x.checked))}let r=s.days[today()]||{};document.getElementById('today').innerHTML=CORE.map(q=>`<div class="todayrow"><span>${q[1]}</span><span class="ok">${r[q[0]]?'✓':''}</span></div>`).join('');document.getElementById('todaysummary').textContent=CORE.filter(q=>r[q[0]]).length+' / 5 core quests' }
@@ -39,8 +77,78 @@ function goalModal(g){let current=g?.month||month.getFullYear()+'-'+String(month
 function questModal(){modal('Create Custom Quest',`<div class="form"><div class="field"><label>Quest name</label><input id="qn" placeholder="e.g. Complete 45 minutes of focused study"></div><div class="field"><label>Detailed completion standard</label><textarea id="qd" placeholder="Describe what genuinely counts as complete."></textarea></div><div class="field"><label>XP</label><input id="qx" type="number" min="5" max="50" value="10"></div><div class="field"><label>Contributes to these badges</label><div class="checks">${BADGES.map(b=>`<label><input type="checkbox" value="${b[0]}"> <span>${b[2]} <b>${b[1]}</b><br>${b[3]}</span></label>`).join('')}</div></div></div>`,()=>{let name=document.getElementById('qn').value.trim(),desc=document.getElementById('qd').value.trim(),xp=Math.max(5,Math.min(50,+document.getElementById('qx').value||10)),badges=[...document.querySelectorAll('.checks input:checked')].map(x=>x.value);if(!name||!desc||!badges.length){toast('Complete the name, description, and badge allocation.');return false}s.custom.push({id:'custom_'+Date.now(),name,desc,xp,badges});save();render()})}
 function renderItems(){document.getElementById('items').innerHTML=BADGES.map(b=>{let own=s.items.includes(b[4]);return `<div class="item" style="opacity:${own?1:.4}"><div class="itemicon">${b[5]}</div><div class="itemname">${b[4]}</div><div class="small">Badge reward. ${own?'OWNED':'Unlock at Badge Level 3'}</div></div>`}).join('')}
 function renderRewards(){document.getElementById('rewards').innerHTML=REW.map((r,i)=>`<div class="reward"><b>${r[0]}</b><div style="color:var(--gold);font-weight:900;margin:4px 0">${r[1]} 🪙</div><div class="small">${r[2]}</div><button class="btn primary" style="margin-top:10px" ${s.coins<r[1]?'disabled':''} data-r="${i}">Redeem</button></div>`).join('');document.querySelectorAll('[data-r]').forEach(x=>x.onclick=()=>{let r=REW[+x.dataset.r];if(s.coins>=r[1]){s.coins-=r[1];save();render();toast(r[0]+' redeemed.')}})}
-async function api(path,opt={}){let r=await fetch(cfg.url.replace(/\/$/,'')+'/rest/v1/'+path,{...opt,headers:{apikey:cfg.key,Authorization:'Bearer '+cfg.key,'Content-Type':'application/json',Prefer:'resolution=merge-duplicates,return=minimal',...(opt.headers||{})}});if(!r.ok)throw Error(await r.text());return r}async function push(){if(!cfg.url||!cfg.key)return;try{await api('trainer_saves?on_conflict=id',{method:'POST',body:JSON.stringify({id:s.trainerId||'russ',data:s,updated_at:new Date().toISOString()})});document.getElementById('syncstatus').textContent='Cloud synced • '+new Date().toLocaleTimeString();document.getElementById('syncstatus').className='online'}catch(e){document.getElementById('syncstatus').textContent='Sync error: check Supabase setup';document.getElementById('syncstatus').className='offline'}}async function pull(){if(!cfg.url||!cfg.key){toast('Connect Supabase first.');return}try{let r=await api('trainer_saves?id=eq.'+encodeURIComponent(s.trainerId||'russ'),{method:'GET'}),a=await r.json();if(!a.length){toast('No cloud save yet.');return}s=Object.assign(fresh(),a[0].data);localStorage.setItem(KEY,JSON.stringify(s));render();toast('Cloud save loaded.')}catch(e){toast('Could not pull cloud save.')}}
+async function api(path,opt={}){
+  let base=cfg.url.replace(/\/$/,'');
+  let r=await fetch(base+'/rest/v1/'+path,{
+    ...opt,
+    headers:{
+      apikey:cfg.key,
+      Authorization:'Bearer '+cfg.key,
+      'Content-Type':'application/json',
+      Prefer:'resolution=merge-duplicates,return=minimal',
+      ...(opt.headers||{})
+    }
+  });
+  if(!r.ok)throw Error(await r.text());
+  return r;
+}
+async function push(manual=true){
+  if(!cfg.url||!cfg.key){toast('Save the Supabase connection first.');return false}
+  try{
+    await api('trainer_saves?on_conflict=id',{
+      method:'POST',
+      body:JSON.stringify({id:s.trainerId||'russ',data:s,updated_at:new Date().toISOString()})
+    });
+    cloudReady=true;
+    document.getElementById('syncstatus').textContent='Cloud synced • '+new Date().toLocaleTimeString();
+    document.getElementById('syncstatus').className='online';
+    if(manual)toast('Local save pushed to cloud.');
+    return true;
+  }catch(e){
+    cloudReady=false;
+    document.getElementById('syncstatus').textContent='Sync error: check Supabase table/policies';
+    document.getElementById('syncstatus').className='offline';
+    if(manual)toast('Push failed. Your local save is still safe.');
+    return false;
+  }
+}
+async function pull(){
+  if(!cfg.url||!cfg.key){toast('Save the Supabase connection first.');return}
+  try{
+    let r=await api('trainer_saves?id=eq.'+encodeURIComponent(s.trainerId||'russ'),{method:'GET'});
+    let a=await r.json();
+    if(!a.length){toast('No cloud save exists for Trainer ID '+(s.trainerId||'russ')+'. Push from your main device first.');return}
+    s=Object.assign(fresh(),a[0].data);
+    localStorage.setItem(KEY,JSON.stringify(s));
+    cloudReady=true;
+    render();
+    document.getElementById('syncstatus').textContent='Cloud save loaded • '+new Date().toLocaleTimeString();
+    document.getElementById('syncstatus').className='online';
+    toast('Cloud save pulled onto this device.');
+  }catch(e){
+    document.getElementById('syncstatus').textContent='Pull error: check Supabase table/policies';
+    document.getElementById('syncstatus').className='offline';
+    toast('Pull failed. Your local save was not changed.');
+  }
+}
 function render(){let l=lvl(),st=streak();s.longest=Math.max(s.longest,st);document.getElementById('rank').textContent=l>=40?'CHAMPION':l>=25?'ELITE FOUR':l>=12?'ELITE TRAINER':'ROUTE 1 TRAINER';for(let id of ['level','heroLevel'])document.getElementById(id).textContent=l;document.getElementById('xp').textContent=s.xp;document.getElementById('coins').textContent=s.coins;document.getElementById('streak').textContent=st;document.getElementById('badgecount').textContent=BADGES.filter(b=>bl(b[0])===3).length+' / 8';document.getElementById('xpfill').style.width=s.xp%100+'%';document.getElementById('xptxt').textContent=s.xp%100+' / 100 XP';renderQuests();renderBadges();renderParty();renderCoat();renderItems();renderRewards();renderGoals();renderHomeGoals();document.getElementById('tcLevel').textContent=l;document.getElementById('tcXP').textContent=s.xp;document.getElementById('tcC').textContent=s.coins;document.getElementById('tcS').textContent=s.longest;document.getElementById('tcQ').textContent=Object.values(s.days).reduce((n,r)=>n+qAll().filter(q=>r[q.id]).length,0);document.getElementById('tcB').textContent=BADGES.filter(b=>bl(b[0])===3).length;document.getElementById('journal').value=s.notes[today()]||'';document.getElementById('surl').value=cfg.url||'';document.getElementById('skey').value=cfg.key||'';document.getElementById('tid').value=s.trainerId||'russ';document.getElementById('syncstatus').textContent=cfg.url&&cfg.key?'Configured':'Not connected';document.getElementById('syncstatus').className=cfg.url&&cfg.key?'online':'offline'}
 
-document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById('page-'+b.dataset.p).classList.add('active');document.querySelectorAll('#nav button').forEach(x=>x.classList.toggle('active',x===b));scrollTo(0,0)});document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>document.querySelector(`[data-p="${b.dataset.go}"]`).click());document.getElementById('addquest').onclick=questModal;document.getElementById('addgoal').onclick=()=>goalModal();document.getElementById('prev').onclick=()=>{month.setMonth(month.getMonth()-1);renderGoals();renderHomeGoals()};document.getElementById('next').onclick=()=>{month.setMonth(month.getMonth()+1);renderGoals();renderHomeGoals()};document.getElementById('journal').oninput=e=>{s.notes[today()]=e.target.value;save()};document.getElementById('connect').onclick=async()=>{cfg={url:document.getElementById('surl').value.trim(),key:document.getElementById('skey').value.trim()};s.trainerId=document.getElementById('tid').value.trim()||'russ';localStorage.setItem('russSync',JSON.stringify(cfg));save();await push()};document.getElementById('pull').onclick=pull;if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js');render();
-</script></body></html>
+document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById('page-'+b.dataset.p).classList.add('active');document.querySelectorAll('#nav button').forEach(x=>x.classList.toggle('active',x===b));scrollTo(0,0)});document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>document.querySelector(`[data-p="${b.dataset.go}"]`).click());document.getElementById('addquest').onclick=questModal;document.getElementById('addgoal').onclick=()=>goalModal();document.getElementById('prev').onclick=()=>{month.setMonth(month.getMonth()-1);renderGoals();renderHomeGoals()};document.getElementById('next').onclick=()=>{month.setMonth(month.getMonth()+1);renderGoals();renderHomeGoals()};document.getElementById('journal').oninput=e=>{s.notes[today()]=e.target.value;save()};document.getElementById('connect').onclick=()=>{
+  const raw=document.getElementById('surl').value.trim();
+  const url=raw.replace(/\/rest\/v1\/?$/,'').replace(/\/$/,'');
+  const key=document.getElementById('skey').value.trim();
+  const id=document.getElementById('tid').value.trim()||'russ';
+  if(!url||!key){toast('Enter the Supabase URL and publishable/anon key.');return}
+  cfg={url,key};
+  localStorage.setItem('russSync',JSON.stringify(cfg));
+  s.trainerId=id;
+  localStorage.setItem(KEY,JSON.stringify(s));
+  cloudReady=false;
+  document.getElementById('syncstatus').textContent='Connection saved. Nothing was uploaded.';
+  document.getElementById('syncstatus').className='online';
+  toast('Connection saved safely.');
+};
+document.getElementById('push').onclick=()=>push(true);
+document.getElementById('pull').onclick=pull;
+if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js');render();
+</script><div style="position:fixed;left:10px;bottom:10px;color:#52627a;font-size:9px;opacity:.65">League V4 • controlled cloud sync</div></body></html>

@@ -1,4 +1,4 @@
-# Russ's Pokémon League V3
+# Russ's Pokémon League V4
 
 ## Included
 - Six Pokémon with circular individual image frames and live evolution sprites.
@@ -40,3 +40,12 @@ These anonymous policies are suitable only for a personal prototype. For a publi
 
 ## Pokémon sprites
 Individual sprites are loaded at runtime from the PokeAPI sprites repository.
+
+
+## V4 sync behavior
+- **Save Connection** never uploads and never overwrites a cloud save.
+- **Push Local Save** explicitly uploads this device's save.
+- **Pull Cloud Save** explicitly replaces this device's local save with the cloud save.
+- Automatic pushes only begin after a successful explicit Push or Pull.
+- The app removes an accidentally pasted `/rest/v1/` suffix from the Project URL.
+- First-time setup should always be: main device -> Push -> other device -> Pull.
