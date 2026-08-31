@@ -1,20 +1,24 @@
-# Russ’s Pokémon League — Final Retro Build
+# Russ's Pokémon League FINAL V2
 
-A pixel-styled life RPG inspired by early Pokémon DS-era UI conventions.
+Retro 2000s handheld/DS-inspired RPG UI.
 
-## Features
-- Simultaneous badge progression
-- Six evolving Pokémon: Eevee→Umbreon, Zorua→Zoroark, Sneasel→Weavile, Deino→Zweilous→Hydreigon, Gible→Gabite→Garchomp, Pawniard→Bisharp→Kingambit
-- Unlimited editable monthly objectives with daily checkboxes
-- Rewards, inventory, trainer card and Coat of Arms
-- Supabase PC↔phone cloud save
-- Controlled Push/Pull sync so connection setup cannot silently overwrite your cloud save
-- Supabase `sb_publishable_...` keys supported
+Features:
+- compact pixel-inspired layout
+- custom CSS trainer sprite
+- SVG badge sprites, no emoji badge art
+- six Pokémon with runtime sprite evolution
+- parallel badge progression
+- unlimited monthly objectives with daily checkboxes
+- editable/deletable objectives
+- multi-badge quests
+- Supabase PC/phone sync
+- controlled Push/Pull sync flow
+- export/import local save
 
-## Deploy
-Upload all files to the root of the GitHub Pages repository and wait for the Pages deployment.
+Install:
+1. Replace the existing GitHub Pages files with all files in this folder.
+2. Wait for Pages deployment.
+3. Open the site in Incognito once to force the new service worker.
+4. Then reinstall the PWA on your phone if needed.
 
-## Supabase
-Use the Project URL without `/rest/v1/`. Use the publishable/anon key, never a secret/service-role key. The existing `trainer_saves` table/policies can be reused.
-
-First-time sync: on the device with the correct save, Save Connection → Push Local Save. On the other device, Save Connection → Pull Cloud Save.
+The Pokémon sprites load from the PokeAPI sprite repository at runtime.
