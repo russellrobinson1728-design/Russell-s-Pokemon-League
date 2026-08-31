@@ -1,301 +1,46 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#090d17">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" href="icon-64.png">
-<link rel="apple-touch-icon" href="icon-180.png">
-<title>Russ's Pokémon League</title>
-<style>
-:root{
- --bg:#080c15;--panel:#101827;--panel2:#0b1220;--line:#26344a;--text:#f5f7fb;
- --muted:#8e9db2;--gold:#f4c95d;--blue:#55a7ff;--green:#40d39a;--red:#ef6677;
- --purple:#a77bf3;--shadow:0 18px 55px #0008
-}
-*{box-sizing:border-box}html{scroll-behavior:smooth}
-body{margin:0;color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;background:
-radial-gradient(circle at 50% -10%,#1c2b4a,transparent 38%),radial-gradient(circle at 100% 50%,#261b38,transparent 32%),var(--bg)}
-button,input,textarea,select{font:inherit}button{cursor:pointer}
-.app{max-width:1350px;margin:auto;padding:16px 14px 75px}
-.top{display:grid;grid-template-columns:230px 1fr 260px;gap:12px;align-items:stretch}
-.card{background:linear-gradient(145deg,#111a2aee,#0c1320ee);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow)}
-.profile{padding:18px}.avatar{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#d6b65a,#7d6124);font-size:27px;color:#111}
-.name{font-size:25px;font-weight:950;margin-top:9px}.rank{font-size:11px;letter-spacing:1.2px;color:var(--gold);font-weight:900}
-.profileStats{margin-top:16px;display:grid;gap:9px}.pstat{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}.pstat b{color:#fff}
-.hero{padding:22px;text-align:center;display:flex;flex-direction:column;justify-content:center;min-height:190px;background:radial-gradient(circle,#172641,#0c1421 65%)}
-.hero h1{font-family:Georgia,serif;font-size:34px;line-height:1;margin:0;color:var(--gold);text-shadow:0 2px 18px #000}
-.hero p{color:#cbd5e1;font-style:italic;margin:10px 0 0}
-.hero .level{font-size:13px;color:var(--muted);margin-top:16px}.hero .xp{font-size:14px;font-weight:800;margin-top:4px}
-.today{padding:17px}.today h3{margin:0 0 11px;color:var(--gold);font-family:Georgia,serif}.todayRow{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #1c283a;font-size:12px}.todayRow:last-child{border:0}.check{color:var(--green);font-size:18px}
-.xpbar,.miniBar{height:8px;background:#19243a;border-radius:99px;overflow:hidden}.xpfill,.miniFill{height:100%;background:linear-gradient(90deg,var(--green),var(--blue));width:0}
-.nav{display:flex;gap:7px;overflow:auto;margin:13px 0}.nav button{border:1px solid var(--line);background:#0e1727;color:var(--muted);padding:9px 13px;border-radius:999px;white-space:nowrap}.nav button.active{color:#fff;border-color:#a7792a;background:#1b2639}
-.page{display:none}.page.active{display:block}
-.grid{display:grid;grid-template-columns:1.2fr .8fr;gap:13px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
-.panel{padding:17px;margin-bottom:13px}.title{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:13px}.title h2{font-family:Georgia,serif;font-size:19px;color:var(--gold);margin:0}.muted{color:var(--muted);font-size:12px}
-.quest{display:flex;gap:11px;align-items:center;padding:12px;background:var(--panel2);border:1px solid var(--line);border-radius:11px;margin-bottom:8px}.quest input{width:19px;height:19px}.quest .q{flex:1}.quest .qname{font-weight:850}.quest .desc{font-size:11px;color:var(--muted);margin-top:2px}.quest .qxp{font-weight:900;color:var(--green)}.quest.done{opacity:.55}.quest.done .qname{text-decoration:line-through}
-.stat{padding:12px;background:var(--panel2);border:1px solid var(--line);border-radius:11px}.stat b{display:block;font-size:22px}.stat span{font-size:10px;color:var(--muted)}
-.party{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}.poke{padding:13px;text-align:center;background:var(--panel2);border:1px solid var(--line);border-radius:13px}.poke .icon{font-size:36px}.poke .pname{font-weight:900}.poke .stage{font-size:10px;color:var(--gold);font-weight:800}.poke .role{font-size:10px;color:var(--muted);min-height:25px}.poke .plvl{font-size:12px;font-weight:900;margin-top:5px}.poke .evo{font-size:9px;color:var(--muted);margin-top:4px}
-.badges{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.badge{padding:13px;background:var(--panel2);border:1px solid var(--line);border-radius:13px;position:relative;overflow:hidden}.badge .gem{width:62px;height:62px;margin-bottom:9px;display:grid;place-items:center;font-size:27px;background:#18243a;border:2px solid #53647c;clip-path:polygon(50% 0,92% 24%,92% 76%,50% 100%,8% 76%,8% 24%);filter:drop-shadow(0 4px 8px #000)}.badge.lvl2 .gem{border-color:#8b6b24;background:#2a2414}.badge.lvl3 .gem{border-color:#d4ad42;background:#33270d;box-shadow:0 0 20px #f4c95d18}.badge .bn{font-weight:900}.badge .bd{font-size:10px;color:var(--muted);min-height:28px;margin-top:3px}.badge .bp{display:flex;justify-content:space-between;font-size:10px;margin-top:10px}.badge .bbar{height:6px;background:#19243a;border-radius:99px;overflow:hidden;margin-top:5px}.badge .bfill{height:100%;background:linear-gradient(90deg,#5a9be8,#f4c95d);width:0}.badge .blvl{color:var(--gold);font-weight:900;font-size:10px;margin-top:7px}
-.coat{display:grid;grid-template-columns:1fr 1fr;gap:15px;align-items:center}.crest{min-height:440px;display:grid;place-items:center;padding:20px}.crestInner{width:min(370px,80vw);aspect-ratio:1;position:relative;display:grid;place-items:center}.shield{position:absolute;inset:12%;background:linear-gradient(145deg,#c99b2e,#3c2b0e);clip-path:polygon(50% 0,93% 14%,87% 73%,50% 100%,13% 73%,7% 14%);display:grid;place-items:center;box-shadow:0 0 40px #f4c95d33}.shield::after{content:"R";font:900 75px Georgia;color:#111;opacity:.9}.crestBadge{position:absolute;width:82px;height:82px;display:grid;place-items:center;font-size:28px;background:#121b2b;border:3px solid #8a6a25;clip-path:polygon(50% 0,93% 24%,93% 76%,50% 100%,7% 76%,7% 24%);box-shadow:0 8px 20px #000}.cb0{top:2%;left:50%;transform:translateX(-50%)}.cb1{top:20%;right:1%}.cb2{bottom:15%;right:10%}.cb3{bottom:1%;left:50%;transform:translateX(-50%)}.cb4{bottom:15%;left:10%}.cb5{top:20%;left:1%}.cb6{top:43%;left:50%;transform:translate(-50%,-50%);width:96px;height:96px}.cb7{top:43%;right:-2%;transform:translateY(-50%)}
-.crestLocked{opacity:.25;filter:grayscale(1)}.crestLabel{text-align:center;margin-top:15px;color:var(--gold);font-family:Georgia,serif;font-weight:900}
-.itemGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.item{padding:14px;background:var(--panel2);border:1px solid var(--line);border-radius:12px}.itemIcon{font-size:28px}.itemName{font-weight:850;margin-top:4px}.itemDesc{font-size:10px;color:var(--muted);margin-top:3px}
-.rewardGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.reward{padding:15px;background:var(--panel2);border:1px solid var(--line);border-radius:12px}.reward h3{margin:0 0 5px}.cost{color:var(--gold);font-weight:900}.btn{border:1px solid var(--line);background:#172238;color:#fff;border-radius:9px;padding:8px 11px}.btn.primary{background:#245da7;border-color:#4c8ed8}.btn:disabled{opacity:.35;cursor:not-allowed}
-.form{display:grid;gap:10px}.field{display:grid;gap:5px}.field label{font-size:11px;color:var(--muted);font-weight:800}.field input,.field textarea,.field select{width:100%;background:#09111e;border:1px solid var(--line);color:#fff;border-radius:9px;padding:10px}.field textarea{min-height:100px;resize:vertical}
-.table{width:100%;border-collapse:collapse}.table th,.table td{border-bottom:1px solid var(--line);padding:9px 6px;text-align:left;font-size:12px}.table th{color:var(--muted);font-size:10px}
-.empty{padding:25px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:12px}
-.toast{position:fixed;right:15px;bottom:15px;background:#0b1322;border:1px solid #465975;padding:12px 14px;border-radius:11px;box-shadow:var(--shadow);opacity:0;transform:translateY(15px);transition:.2s;z-index:99}.toast.show{opacity:1;transform:none}
-@media(max-width:1000px){.top{grid-template-columns:1fr 1fr}.hero{grid-column:1/-1;grid-row:1}.profile,.today{grid-row:2}.party{grid-template-columns:repeat(3,1fr)}.coat{grid-template-columns:1fr}.badges{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:650px){.top{grid-template-columns:1fr}.hero,.profile,.today{grid-column:auto;grid-row:auto}.grid{grid-template-columns:1fr}.grid3{grid-template-columns:repeat(2,1fr)}.party{grid-template-columns:repeat(2,1fr)}.itemGrid,.rewardGrid{grid-template-columns:1fr 1fr}.hero h1{font-size:28px}.crest{min-height:350px}}
-</style>
-</head>
-<body>
-<div class="app">
-<div class="top">
-  <section class="card profile">
-    <div class="avatar">⚔️</div><div class="name" id="trainerName">Russ</div><div class="rank" id="rank">ROUTE 1 TRAINER</div>
-    <div class="profileStats">
-      <div class="pstat"><span>Level</span><b id="level">1</b></div>
-      <div class="pstat"><span>XP</span><b id="totalXP">0</b></div>
-      <div class="pstat"><span>League Coins</span><b id="coins">0</b></div>
-      <div class="pstat"><span>Streak</span><b id="streak">0 days</b></div>
-      <div class="pstat"><span>Badges</span><b id="badgeCount">0 / 8</b></div>
-    </div>
-  </section>
-  <section class="card hero">
-    <h1>RUSS'S<br>POKÉMON LEAGUE</h1>
-    <p>“Discipline today. Freedom tomorrow.”</p>
-    <div class="level">LEVEL <b id="heroLevel">1</b></div>
-    <div class="xpbar"><div class="xpfill" id="xpFill"></div></div>
-    <div class="xp" id="xpText">0 / 100 XP</div>
-  </section>
-  <section class="card today">
-    <h3>TODAY</h3>
-    <div id="todayList"></div>
-    <div style="margin-top:9px" class="muted" id="todaySummary">0 / 5 core quests</div>
-  </section>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#080c15"><link rel="manifest" href="manifest.json"><link rel="icon" href="icon-64.png"><link rel="apple-touch-icon" href="icon-180.png"><title>Russ's Pokémon League</title><style>
+:root{--bg:#080c15;--p:#101827;--p2:#0b1220;--line:#28374e;--txt:#f7f8fb;--mut:#93a2b8;--gold:#f4c95d;--green:#40d39a;--blue:#55a7ff;--red:#ef6677}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 50% -15%,#1b2a47,transparent 40%),var(--bg);color:var(--txt);font-family:system-ui,-apple-system,Segoe UI,sans-serif}button,input,textarea{font:inherit}button{cursor:pointer}.app{max-width:1400px;margin:auto;padding:14px 14px 70px}.card{background:#0f1726ee;border:1px solid var(--line);border-radius:16px;box-shadow:0 18px 55px #0007}.top{display:grid;grid-template-columns:230px 1fr 280px;gap:12px}.profile,.today,.hero,.panel{padding:17px}.avatar{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#d7b85d,#745a20);color:#111;font-size:26px}.name{font-size:25px;font-weight:950;margin-top:8px}.rank{font-size:11px;color:var(--gold);font-weight:900;letter-spacing:1px}.stats{display:grid;gap:8px;margin-top:14px}.statline{display:flex;justify-content:space-between;font-size:12px;color:var(--mut)}.statline b{color:#fff}.hero{text-align:center;display:flex;flex-direction:column;justify-content:center;background:radial-gradient(circle,#172743,#0c1421 68%)}h1{font:900 34px/1 Georgia,serif;color:var(--gold);margin:0}.hero p{color:#cbd5e1;font-style:italic}.bar{height:8px;background:#1b263b;border-radius:99px;overflow:hidden}.fill{height:100%;width:0;background:linear-gradient(90deg,var(--green),var(--blue))}.today h3,.title h2{font:900 19px Georgia,serif;color:var(--gold);margin:0}.todayrow{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #1c283a;font-size:12px}.ok{color:var(--green);font-weight:900}.nav{display:flex;gap:7px;overflow:auto;margin:13px 0}.nav button{white-space:nowrap;border:1px solid var(--line);background:#0d1625;color:var(--mut);padding:9px 13px;border-radius:999px}.nav button.active{color:#fff;background:#1b2639;border-color:#a7792a}.page{display:none}.page.active{display:block}.grid{display:grid;grid-template-columns:1.2fr .8fr;gap:13px}.panel{margin-bottom:13px}.title{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}.muted{font-size:12px;color:var(--mut);line-height:1.5}.btn{border:1px solid var(--line);background:#172238;color:#fff;padding:8px 11px;border-radius:9px}.primary{background:#245da7;border-color:#4c8ed8}.danger{background:#3a1720;border-color:#7c3444}.quest{display:flex;gap:11px;align-items:center;padding:13px;background:var(--p2);border:1px solid var(--line);border-radius:11px;margin-bottom:8px}.quest input{width:19px;height:19px}.q{flex:1}.qname{font-weight:900}.qdesc{font-size:11px;color:var(--mut);margin-top:3px;line-height:1.45}.qxp{color:var(--green);font-weight:900}.done{opacity:.55}.done .qname{text-decoration:line-through}.party{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}.poke{padding:13px;text-align:center;background:var(--p2);border:1px solid var(--line);border-radius:14px}.pokeimg{width:105px;height:105px;border-radius:50%;margin:auto;display:grid;place-items:center;background:radial-gradient(circle,#253553,#0b1220 72%);border:2px solid #61728b;overflow:hidden}.pokeimg img{width:100px;height:100px;object-fit:contain}.pname{font-weight:950;margin-top:8px}.stage{font-size:10px;color:var(--gold);font-weight:900}.role{font-size:10px;color:var(--mut);min-height:28px;margin-top:3px}.badges{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.badge{padding:13px;background:var(--p2);border:1px solid var(--line);border-radius:13px}.gem{width:66px;height:66px;display:grid;place-items:center;font-size:27px;background:#18243a;border:2px solid #53647c;clip-path:polygon(50% 0,92% 24%,92% 76%,50% 100%,8% 76%,8% 24%);margin-bottom:9px}.badge.l3 .gem{border-color:#d4ad42;background:#33270d}.bd{font-size:10px;color:var(--mut);line-height:1.4;min-height:32px}.bp{display:flex;justify-content:space-between;font-size:10px;margin-top:9px}.bfill{height:6px;background:linear-gradient(90deg,#5a9be8,#f4c95d);border-radius:99px}.coat{display:grid;grid-template-columns:1fr 1fr;gap:20px}.crest{min-height:450px;display:grid;place-items:center}.crestbox{width:min(370px,82vw);aspect-ratio:1;position:relative}.shield{position:absolute;inset:13%;background:linear-gradient(145deg,#c99b2e,#3c2b0e);clip-path:polygon(50% 0,93% 14%,87% 73%,50% 100%,13% 73%,7% 14%);display:grid;place-items:center}.shield:after{content:'R';font:900 75px Georgia;color:#111}.cb{position:absolute;width:80px;height:80px;display:grid;place-items:center;font-size:27px;background:#121b2b;border:3px solid #8a6a25;clip-path:polygon(50% 0,93% 24%,93% 76%,50% 100%,7% 76%,7% 24%)}.locked{opacity:.22;filter:grayscale(1)}.c0{top:1%;left:50%;transform:translateX(-50%)}.c1{top:19%;right:1%}.c2{bottom:15%;right:10%}.c3{bottom:1%;left:50%;transform:translateX(-50%)}.c4{bottom:15%;left:10%}.c5{top:19%;left:1%}.c6{top:43%;left:50%;transform:translate(-50%,-50%);width:94px;height:94px}.c7{top:43%;right:-1%;transform:translateY(-50%)}.goals{max-height:650px;overflow:auto;padding-right:4px}.goal{background:var(--p2);border:1px solid var(--line);border-radius:13px;padding:13px;margin-bottom:9px}.goalhead{display:flex;justify-content:space-between;gap:10px}.goalname{font-weight:950}.goaldesc{font-size:11px;color:var(--mut);line-height:1.45;margin-top:4px}.days{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;margin-top:10px}.day{min-width:25px;aspect-ratio:1;border:1px solid #33435a;background:#101a2a;color:#7f90a8;border-radius:5px;font-size:9px;padding:0}.day.done{background:#245c4b;border-color:var(--green);color:#fff}.day.today{outline:2px solid var(--gold)}.goalfoot{display:flex;justify-content:space-between;color:var(--mut);font-size:10px;margin-top:7px}.form{display:grid;gap:10px}.field{display:grid;gap:5px}.field label{font-size:11px;color:var(--mut);font-weight:850}.field input,.field textarea{width:100%;background:#09111e;color:#fff;border:1px solid var(--line);border-radius:9px;padding:10px}.field textarea{min-height:90px}.checks{display:grid;grid-template-columns:1fr 1fr;gap:7px;background:#09111e;border:1px solid var(--line);border-radius:9px;padding:9px}.checks label{display:flex;gap:7px;align-items:flex-start;font-size:11px;line-height:1.3}.items,.rewards{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.item,.reward,.sync{padding:14px;background:var(--p2);border:1px solid var(--line);border-radius:12px}.itemicon{font-size:28px}.itemname{font-weight:900}.small{font-size:10px;color:var(--mut);line-height:1.45}.syncbox{display:grid;gap:10px}.online{color:var(--green);font-weight:850}.offline{color:var(--mut);font-weight:850}.modal{display:none;position:fixed;inset:0;background:#000b;z-index:50;align-items:center;justify-content:center;padding:18px}.modalinner{max-width:650px;width:100%;padding:20px}.toast{position:fixed;right:15px;bottom:15px;background:#0b1322;border:1px solid #465975;padding:12px 14px;border-radius:11px;opacity:0;transform:translateY(10px);transition:.2s;z-index:100}.toast.show{opacity:1;transform:none}@media(max-width:1050px){.top{grid-template-columns:1fr 1fr}.hero{grid-column:1/-1;grid-row:1}.profile,.today{grid-row:2}.party{grid-template-columns:repeat(3,1fr)}.coat{grid-template-columns:1fr}}@media(max-width:650px){.top{grid-template-columns:1fr}.hero,.profile,.today{grid-column:auto;grid-row:auto}.grid{grid-template-columns:1fr}.party{grid-template-columns:repeat(2,1fr)}.badges{grid-template-columns:repeat(2,1fr)}.items,.rewards{grid-template-columns:1fr 1fr}.checks{grid-template-columns:1fr}.days{grid-template-columns:repeat(8,1fr)}h1{font-size:28px}.pokeimg{width:88px;height:88px}.pokeimg img{width:84px;height:84px}}
+</style></head><body><div class="app">
+<div class="top"><section class="card profile"><div class="avatar">⚔️</div><div class="name">Russ</div><div class="rank" id="rank">ROUTE 1 TRAINER</div><div class="stats"><div class="statline"><span>Level</span><b id="level">1</b></div><div class="statline"><span>XP</span><b id="xp">0</b></div><div class="statline"><span>League Coins</span><b id="coins">0</b></div><div class="statline"><span>Streak</span><b id="streak">0</b></div><div class="statline"><span>Badges</span><b id="badgecount">0 / 8</b></div></div></section>
+<section class="card hero"><h1>RUSS'S<br>POKÉMON LEAGUE</h1><p>Discipline today. Freedom tomorrow.</p><div class="muted">TRAINER LEVEL <b id="heroLevel">1</b></div><div class="bar"><div class="fill" id="xpfill"></div></div><b id="xptxt">0 / 100 XP</b></section>
+<section class="card today"><h3>TODAY</h3><div id="today"></div><div class="muted" id="todaysummary">0 / 5 core quests</div></section></div>
+<nav class="nav" id="nav"><button class="active" data-p="home">⌂ Home</button><button data-p="quests">☷ Quests</button><button data-p="goals">▦ Monthly Goals</button><button data-p="pokemon">◉ Pokémon</button><button data-p="badges">✦ Badges</button><button data-p="coat">♜ Coat of Arms</button><button data-p="inventory">▣ Inventory</button><button data-p="rewards">🎁 Rewards</button><button data-p="trainer">▤ Trainer Card</button><button data-p="sync">☁ Sync</button></nav>
+<section class="page active" id="page-home"><div class="grid"><section class="card panel"><div class="title"><h2>Today's Quests</h2><button class="btn primary" data-go="quests">All quests</button></div><div id="homequests"></div></section><section class="card panel"><div class="title"><h2>Monthly Objectives</h2><button class="btn primary" data-go="goals">Manage</button></div><div id="homegoals"></div></section></div><section class="card panel"><div class="title"><h2>Badge Progress</h2><span class="muted">All eight develop together</span></div><div class="badges" id="homebadges"></div></section><section class="card panel"><div class="title"><h2>Current Party</h2><span class="muted">Each Pokémon evolves as you grow</span></div><div class="party" id="homeparty"></div></section></section>
+<section class="page" id="page-quests"><section class="card panel"><div class="title"><h2>Quest Board</h2><button class="btn primary" id="addquest">+ Custom Quest</button></div><p class="muted">Every quest can feed multiple badges. This is deliberate: your development is simultaneous, not a monthly conveyor belt.</p><div id="questlist"></div></section></section>
+<section class="page" id="page-goals"><section class="card panel"><div class="title"><h2>Monthly Objectives</h2><div><button class="btn" id="prev">‹</button> <b id="month"></b> <button class="btn" id="next">›</button> <button class="btn primary" id="addgoal">+ Add Objective</button></div></div><p class="muted">Add unlimited objectives. Each one has a daily checkbox grid for the selected month. Edit the wording whenever your plan changes.</p><div class="goals" id="goallist"></div></section></section>
+<section class="page" id="page-pokemon"><section class="card panel"><div class="title"><h2>Pokémon Party</h2><span class="muted">You begin with the first stage, not the final form.</span></div><div class="party" id="fullparty"></div></section><section class="card panel"><div class="title"><h2>Evolution Paths</h2></div><div id="evotable"></div></section></section>
+<section class="page" id="page-badges"><section class="card panel"><div class="title"><h2>Eight Badges</h2><span class="muted">No manual unlocks. Progress is earned from completed quests.</span></div><div class="badges" id="fullbadges"></div></section></section>
+<section class="page" id="page-coat"><section class="card panel coat"><div class="crest"><div><div class="crestbox" id="crest"><div class="shield"></div></div><div class="muted" style="text-align:center" id="crestlabel"></div></div></div><div><div class="title"><h2>Champion Coat of Arms</h2></div><p class="muted">Each badge is a distinct piece of the emblem. Level 3 completes that piece. Earn all eight to complete your Champion crest.</p><div id="coatlist"></div></div></section></section>
+<section class="page" id="page-inventory"><section class="card panel"><div class="title"><h2>🎒 Key Items</h2></div><div class="items" id="items"></div></section></section>
+<section class="page" id="page-rewards"><section class="card panel"><div class="title"><h2>🎁 Reward Shop</h2><span class="muted">Coins are for rewards you choose in advance.</span></div><div class="rewards" id="rewards"></div></section></section>
+<section class="page" id="page-trainer"><section class="card panel"><div class="title"><h2>Trainer Card</h2></div><div class="grid" style="grid-template-columns:1fr 1fr"><div><div class="statline"><span>Level</span><b id="tcLevel"></b></div><div class="statline"><span>Total XP</span><b id="tcXP"></b></div><div class="statline"><span>Quests completed</span><b id="tcQ"></b></div><div class="statline"><span>Badges earned</span><b id="tcB"></b></div></div><div><div class="statline"><span>League Coins</span><b id="tcC"></b></div><div class="statline"><span>Longest streak</span><b id="tcS"></b></div></div></div></section><section class="card panel"><div class="title"><h2>Daily Journal</h2><span class="muted">Autosaves</span></div><textarea id="journal" style="width:100%;min-height:140px;background:#09111e;color:#fff;border:1px solid var(--line);border-radius:10px;padding:12px" placeholder="What did you learn, build, improve, experience, or overcome today?"></textarea></section></section>
+<section class="page" id="page-sync"><section class="card panel"><div class="title"><h2>☁ Cross-Device Sync</h2><span class="muted">PC ↔ Phone</span></div><p class="muted">Local browser storage cannot sync between devices by itself. This page connects the same save to Supabase so your PC and phone can share it.</p><div class="syncbox"><div class="field"><label>Supabase Project URL</label><input id="surl" placeholder="https://your-project.supabase.co"></div><div class="field"><label>Supabase anon/public key</label><input id="skey" placeholder="eyJ..."></div><div class="field"><label>Trainer ID</label><input id="tid" placeholder="russ"></div><div><button class="btn primary" id="connect">Connect & Push</button> <button class="btn" id="pull">Pull Cloud Save</button></div><div id="syncstatus" class="offline">Not connected</div></div></section><section class="card panel"><h2 style="font:900 20px Georgia,serif;color:var(--gold)">One-time setup</h2><ol class="muted"><li>Create a Supabase project.</li><li>Open SQL Editor and run the SQL in the included README.</li><li>Copy Project URL and anon/public key from Project Settings → API.</li><li>Paste them here on PC and phone, using the same Trainer ID.</li></ol></section></section>
 </div>
-
-<nav class="nav" id="nav">
-<button class="active" data-page="home">⌂ Home</button>
-<button data-page="quests">☷ Quests</button>
-<button data-page="pokemon">◉ Pokémon</button>
-<button data-page="badges">✦ Badges</button>
-<button data-page="coat">♜ Coat of Arms</button>
-<button data-page="inventory">▣ Inventory</button>
-<button data-page="rewards">🎁 Rewards</button>
-<button data-page="trainer">▤ Trainer Card</button>
-</nav>
-
-<section class="page active" id="page-home">
-<div class="grid">
-<section class="card panel"><div class="title"><h2>Today's Quest Board</h2><button class="btn primary" data-go="quests">View all</button></div><div id="homeQuests"></div></section>
-<section class="card panel"><div class="title"><h2>Next Rewards</h2></div><div id="nextRewards"></div></section>
-</div>
-<section class="card panel"><div class="title"><h2>Badge Progress</h2><span class="muted">All 8 progress simultaneously</span></div><div class="badges" id="homeBadges"></div></section>
-<section class="card panel"><div class="title"><h2>Your Pokémon</h2><span class="muted">They evolve as you evolve</span></div><div class="party" id="homeParty"></div></section>
-</section>
-
-<section class="page" id="page-quests">
-<section class="card panel"><div class="title"><h2>Quest Board</h2><button class="btn primary" id="addQuest">+ Custom Quest</button></div><p class="muted">A quest can feed several badges. You are building the whole Trainer, not grinding one stat at a time.</p><div id="questList"></div></section>
-<section class="card panel"><div class="title"><h2>Quest Statistics</h2></div><div class="grid3">
-<div class="stat"><b id="bodyDays">0</b><span>BODY DAYS</span></div><div class="stat"><b id="mindDays">0</b><span>MIND DAYS</span></div><div class="stat"><b id="disciplineDays">0</b><span>DISCIPLINE DAYS</span></div>
-</div></section>
-</section>
-
-<section class="page" id="page-pokemon">
-<section class="card panel"><div class="title"><h2>Pokémon Party</h2><span class="muted">Everyone starts unevolved.</span></div><div class="party" id="fullParty"></div></section>
-<section class="card panel"><div class="title"><h2>Evolution Road</h2></div><div id="evolutionTable"></div></section>
-</section>
-
-<section class="page" id="page-badges">
-<section class="card panel"><div class="title"><h2>Eight Gym Badges</h2><span class="muted">No manual unlock button. Earn them.</span></div><div class="badges" id="fullBadges"></div></section>
-<section class="card panel"><div class="title"><h2>How Badge Levels Work</h2></div><p class="muted">Every badge has three levels. You can make progress on every badge from day one. Reaching Level 1, 2, and 3 awards coins and upgrades. The final badge is earned only when Level 3 is complete.</p></section>
-</section>
-
-<section class="page" id="page-coat">
-<section class="card panel coat">
-<div class="crest"><div><div class="crestInner" id="crestInner"><div class="shield"></div></div><div class="crestLabel" id="crestLabel">THE CHAMPION EMBLEM</div></div></div>
-<div><div class="title"><h2>Your Coat of Arms</h2></div><p class="muted">Each badge is a distinct piece. Earn all eight and the individual pieces form your Champion emblem.</p><div id="coatList"></div></div>
-</section>
-</section>
-
-<section class="page" id="page-inventory">
-<section class="card panel"><div class="title"><h2>🎒 Key Items</h2><span class="muted">Badge rewards</span></div><div class="itemGrid" id="items"></div></section>
-</section>
-
-<section class="page" id="page-rewards">
-<section class="card panel"><div class="title"><h2>🎁 League Reward Shop</h2><span class="muted">Coins are for real-life rewards you choose</span></div><p class="muted">Set rewards before you earn them. This keeps the system from becoming an excuse machine.</p><div class="rewardGrid" id="rewards"></div></section>
-</section>
-
-<section class="page" id="page-trainer">
-<section class="card panel"><div class="title"><h2>Trainer Card</h2></div><div class="grid3">
-<div class="stat"><b id="tcLevel">1</b><span>LEVEL</span></div><div class="stat"><b id="tcXP">0</b><span>TOTAL XP</span></div><div class="stat"><b id="tcCoins">0</b><span>COINS</span></div><div class="stat"><b id="tcStreak">0</b><span>LONGEST STREAK</span></div><div class="stat"><b id="tcQuests">0</b><span>QUESTS COMPLETED</span></div><div class="stat"><b id="tcBadges">0</b><span>BADGES EARNED</span></div></div></section>
-<section class="card panel"><div class="title"><h2>Journal</h2><span class="muted">Autosaves</span></div><textarea id="journal" style="width:100%;min-height:130px;background:#09111e;color:white;border:1px solid var(--line);border-radius:10px;padding:12px" placeholder="What did you learn, build, improve, or overcome today?"></textarea></section>
-<section class="card panel"><div class="title"><h2>Save Data</h2></div><p class="muted">Your save lives in this browser. Export it regularly if you want a backup.</p><button class="btn" id="export">Export Save</button> <button class="btn" id="import">Import Save</button> <input id="file" type="file" accept=".json" hidden></section>
-</section>
-</div>
-
-<div class="toast" id="toast"></div>
-
-<div class="modal" id="modal" style="display:none;position:fixed;inset:0;background:#000b;z-index:100;align-items:center;justify-content:center;padding:18px">
-<div class="card" style="max-width:520px;width:100%;padding:20px">
-<h2 style="color:var(--gold);font-family:Georgia,serif">Create Custom Quest</h2>
-<div class="form">
-<div class="field"><label>Name</label><input id="newName" maxlength="40" placeholder="e.g. Read 20 pages"></div>
-<div class="field"><label>Description</label><input id="newDesc" maxlength="90" placeholder="What counts as completion?"></div>
-<div class="field"><label>XP</label><input id="newXP" type="number" min="5" max="50" value="10"></div>
-<div class="field"><label>Feeds these badges</label><div id="badgeChecks"></div></div>
-</div>
-<div style="display:flex;justify-content:flex-end;gap:8px;margin-top:14px"><button class="btn" id="cancel">Cancel</button><button class="btn primary" id="create">Create Quest</button></div>
-</div></div>
-
+<div class="modal" id="modal"><div class="card modalinner"><h2 id="mtitle" style="font:900 22px Georgia,serif;color:var(--gold)"></h2><div id="mbody"></div><div style="display:flex;justify-content:flex-end;gap:8px;margin-top:14px"><button class="btn" id="mcancel">Cancel</button><button class="btn primary" id="msave">Save</button></div></div></div><div class="toast" id="toast"></div>
 <script>
-"use strict";
-const KEY="russPokemonLeagueGameV2";
-const START="2026-08-31";
-const CORE=[
-{id:"body",name:"BODY",desc:"Train, walk, stretch, or deliberately recover.",xp:10,badges:["foundation"]},
-{id:"mind",name:"MIND",desc:"30+ minutes of focused learning.",xp:10,badges:["mind","dragon"]},
-{id:"future",name:"FUTURE",desc:"Move one important long-term goal forward.",xp:10,badges:["dragon","crown"]},
-{id:"life",name:"LIFE",desc:"Create, connect, explore, or genuinely enjoy something.",xp:10,badges:["life","voice"]},
-{id:"discipline",name:"DISCIPLINE",desc:"Do one thing you said you would do.",xp:10,badges:["volt","dark"]}
-];
-const BADGES=[
-{id:"foundation",name:"Foundation",icon:"🪨",desc:"Physical resilience",target:60,domains:["body"],item:["Macho Brace","🥊","+5% BODY quest XP"]},
-{id:"volt",name:"Volt",icon:"⚡",desc:"Discipline & consistency",target:60,domains:["discipline"],item:["Magnet","🧲","+2 bonus XP on Discipline quests"]},
-{id:"mind",name:"Mind",icon:"🧠",desc:"Learning & intellect",target:60,domains:["mind"],item:["Wise Glasses","👓","+5% MIND quest XP"]},
-{id:"voice",name:"Voice",icon:"🎤",desc:"Expression & communication",target:60,domains:["life"],item:["Microphone","🎙️","Unlocks Voice missions"]},
-{id:"life",name:"Life",icon:"🌿",desc:"Experience & curiosity",target:60,domains:["life"],item:["Exp. Share","🌱","LIFE XP feeds party growth"]},
-{id:"dark",name:"Dark",icon:"🌑",desc:"Courage & confronting avoidance",target:60,domains:["discipline"],item:["Black Glasses","🕶️","Unlocks Dark missions"]},
-{id:"dragon",name:"Dragon",icon:"🐉",desc:"Mastery & long games",target:60,domains:["mind","future"],item:["Dragon Fang","🦷","Garchomp mastery bonus"]},
-{id:"crown",name:"Crown",icon:"👑",desc:"Leadership & responsibility",target:60,domains:["future"],item:["King's Rock","👑","Unlocks leadership missions"]}
-];
-const POKEMON=[
-{name:"Eevee",final:"Umbreon",mid:"Eevee",icon:"🌙",role:"Stability",badge:"foundation",evo1:5,evo2:15},
-{name:"Zorua",mid:"Zoroark",final:"Zoroark",icon:"🦊",role:"Adaptability",badge:"dark",evo1:8,evo2:18},
-{name:"Sneasel",mid:"Sneasel",final:"Weavile",icon:"⚡",role:"Drive",badge:"volt",evo1:7,evo2:20},
-{name:"Deino",mid:"Zweilous",final:"Hydreigon",icon:"🐲",role:"Curiosity & Ambition",badge:"mind",evo1:10,evo2:25},
-{name:"Gible",mid:"Gabite",final:"Garchomp",icon:"🐉",role:"Mastery",badge:"dragon",evo1:8,evo2:20},
-{name:"Pawniard",mid:"Bisharp",final:"Kingambit",icon:"⚔️",role:"Leadership",badge:"crown",evo1:9,evo2:28}
-];
-const REWARDS=[
-{name:"Small Reward",cost:50,desc:"Snack, coffee, small hobby purchase, or guilt-free gaming session."},
-{name:"Good Reward",cost:150,desc:"Movie, meal out, book, or something you've been wanting."},
-{name:"Rare Reward",cost:300,desc:"A meaningful purchase or experience."},
-{name:"Ultra Reward",cost:600,desc:"A major personal reward you've decided on beforehand."}
-];
-function blank(){return{name:"Russ",xp:0,coins:0,days:{},custom:[],badgeXP:{},badgeLevels:{},items:[],notes:{},longestStreak:0,rewardPurchases:[],created:START}}
-let s=load();
-function load(){try{const x=JSON.parse(localStorage.getItem(KEY));return x?Object.assign(blank(),x):blank()}catch(e){return blank()}}
-function save(){localStorage.setItem(KEY,JSON.stringify(s))}
-function today(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
-function allQ(){return CORE.concat(s.custom||[])}
-function rec(k=today()){if(!s.days[k])s.days[k]={};return s.days[k]}
-function level(){return Math.floor(s.xp/100)+1}
-function rank(){let l=level();return l>=30?"CHAMPION":l>=20?"ELITE FOUR":l>=10?"ELITE TRAINER":"ROUTE 1 TRAINER"}
-function streak(){let n=0,d=new Date();while(active(key(d))){n++;d.setDate(d.getDate()-1)}return n}
-function key(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
-function active(k){const r=s.days[k];return !!r&&allQ().some(q=>r[q.id])}
-function todayXP(){const r=s.days[today()]||{};return allQ().reduce((n,q)=>n+(r[q.id]?q.xp:0),0)}
-function questsDone(){return Object.values(s.days).reduce((n,r)=>n+allQ().filter(q=>r[q.id]).length,0)}
-function badgeProgress(id){return Math.min(BADGES.find(b=>b.id===id).target,s.badgeXP[id]||0)}
-function badgeLevel(id){return Math.min(3,Math.floor(badgeProgress(id)/20))}
-function syncBadgeLevels(){
- BADGES.forEach(b=>{
-  const old=s.badgeLevels[b.id]||0,newL=badgeLevel(b.id);
-  if(newL>old){for(let i=old+1;i<=newL;i++){s.coins+=25;const item=b.item[0];if(i===3&&!s.items.includes(item))s.items.push(item)}s.badgeLevels[b.id]=newL;toast(b.name+" Badge Level "+newL+" reached! +25 coins")}
- });
-}
-function applyQuest(q,checked){
- const r=rec();const before=!!r[q.id];if(before===checked)return;
- r[q.id]=checked;s.xp+=checked?q.xp:-q.xp;
- const delta=checked?1:-1;
- (q.badges||[]).forEach(id=>s.badgeXP[id]=Math.max(0,(s.badgeXP[id]||0)+delta));
- syncBadgeLevels();save();render();if(checked)toast("+"+q.xp+" XP • "+q.name);
-}
-function questHTML(q){
- const r=s.days[today()]||{},done=!!r[q.id];
- return '<label class="quest '+(done?"done":"")+'"><input type="checkbox" '+(done?"checked":"")+' data-q="'+q.id+'"><div class="q"><div class="qname">'+esc(q.name)+'</div><div class="desc">'+esc(q.desc||"")+'</div></div><div class="qxp">+'+q.xp+' XP</div></label>'
-}
-function renderQuests(){
- ["homeQuests","questList"].forEach(id=>{const root=document.getElementById(id);root.innerHTML=allQ().map(questHTML).join("");root.querySelectorAll("input[data-q]").forEach(inp=>inp.addEventListener("change",()=>{const q=allQ().find(x=>x.id===inp.dataset.q);applyQuest(q,inp.checked)}))});
- const r=s.days[today()]||{};const coreDone=CORE.filter(q=>r[q.id]).length;document.getElementById("todayList").innerHTML=CORE.map(q=>'<div class="todayRow"><span>'+q.name+'</span><span class="check">'+(r[q.id]?"✓":"")+'</span></div>').join("");document.getElementById("todaySummary").textContent=coreDone+" / 5 core quests";
- document.getElementById("bodyDays").textContent=count("body");document.getElementById("mindDays").textContent=count("mind");document.getElementById("disciplineDays").textContent=count("discipline");
-}
-function count(id){return Object.values(s.days).filter(r=>r[id]).length}
-function renderBadges(target="homeBadges"){
- const root=document.getElementById(target);if(!root)return;
- root.innerHTML=BADGES.map((b,i)=>{const p=badgeProgress(b.id),l=badgeLevel(b.id);return '<div class="badge lvl'+l+'"><div class="gem">'+b.icon+'</div><div class="bn">'+b.name+' Badge</div><div class="bd">'+b.desc+'</div><div class="bp"><span>Level '+l+'/3</span><span>'+p+' / 60</span></div><div class="bbar"><div class="bfill" style="width:'+(p/60*100)+'%"></div></div><div class="blvl">'+(l===3?"BADGE EARNED":l>0?"IN PROGRESS":"NOT STARTED")+'</div></div>'}).join("");
-}
-function renderAllBadges(){renderBadges("homeBadges");renderBadges("fullBadges")}
-function pokemonStage(p){
- const l=level();
- if(l>=p.evo2)return p.final;
- if(l>=p.evo1)return p.mid;
- return p.name;
-}
-function renderParty(){
- const html=POKEMON.map(p=>{const stage=pokemonStage(p);const next=level()<p.evo1?p.evo1:p.evo2;const evolved=stage!==p.name;return '<div class="poke"><div class="icon">'+p.icon+'</div><div class="pname">'+stage+'</div><div class="stage">'+(stage===p.final?"FINAL EVOLUTION":evolved?"EVOLVED":"STARTER")+'</div><div class="role">'+p.role+'</div><div class="plvl">LV '+level()+'</div><div class="miniBar"><div class="miniFill" style="width:'+(s.xp%100)+'%"></div></div><div class="evo">'+(stage===p.final?"Fully evolved":"Next evolution: Lv "+next)+'</div></div>'}).join("");
- document.getElementById("homeParty").innerHTML=html;document.getElementById("fullParty").innerHTML=html;
- document.getElementById("evolutionTable").innerHTML='<table class="table"><tr><th>PARTY MEMBER</th><th>STARTER</th><th>MID</th><th>FINAL</th><th>EVOLUTION</th></tr>'+POKEMON.map(p=>'<tr><td>'+p.role+'</td><td>'+p.name+'</td><td>'+p.mid+'</td><td>'+p.final+'</td><td>Lv '+p.evo1+' → Lv '+p.evo2+'</td></tr>').join("")+'</table>';
-}
-function renderCoat(){
- const root=document.getElementById("crestInner");root.querySelectorAll(".crestBadge").forEach(x=>x.remove());
- BADGES.forEach((b,i)=>{const e=document.createElement("div");e.className="crestBadge cb"+i+(badgeLevel(b.id)<3?" crestLocked":"");e.textContent=b.icon;root.appendChild(e)});
- const earned=BADGES.filter(b=>badgeLevel(b.id)>=3).length;document.getElementById("crestLabel").textContent=earned===8?"CHAMPION EMBLEM COMPLETE":"EARN "+(8-earned)+" MORE BADGE"+(8-earned===1?"":"S")+" TO COMPLETE THE EMBLEM";
- document.getElementById("coatList").innerHTML=BADGES.map(b=>'<div style="display:flex;justify-content:space-between;padding:9px;border-bottom:1px solid var(--line);font-size:12px"><span>'+b.icon+' '+b.name+'</span><b style="color:var(--gold)">Lv '+badgeLevel(b.id)+'/3</b></div>').join("");
-}
-function renderItems(){
- const root=document.getElementById("items");root.innerHTML=BADGES.map(b=>{const own=s.items.includes(b.item[0]);return '<div class="item" style="opacity:'+(own?1:.4)+'"><div class="itemIcon">'+b.item[1]+'</div><div class="itemName">'+b.item[0]+'</div><div class="itemDesc">'+b.item[2]+'</div><div class="muted" style="margin-top:7px">'+(own?"OWNED":"Unlock at Badge Level 3")+'</div></div>'}).join("");
-}
-function renderRewards(){
- document.getElementById("rewards").innerHTML=REWARDS.map((r,i)=>'<div class="reward"><h3>'+r.name+'</h3><div class="cost">'+r.cost+' 🪙</div><p class="muted">'+r.desc+'</p><button class="btn primary" '+(s.coins<r.cost?"disabled":"")+' data-reward="'+i+'">Redeem</button></div>').join("");
- document.querySelectorAll("[data-reward]").forEach(b=>b.addEventListener("click",()=>{const r=REWARDS[Number(b.dataset.reward)];if(s.coins>=r.cost){s.coins-=r.cost;s.rewardPurchases.push({name:r.name,cost:r.cost,date:today()});save();render();toast(r.name+" redeemed.")}}));
-}
-function renderNextRewards(){
- const next=BADGES.find(b=>badgeLevel(b.id)<3);let html=next?'<div class="stat"><b>'+next.icon+' '+next.name+'</b><span>'+badgeProgress(next.id)+' / 60 points • Level '+badgeLevel(next.id)+'/3</span></div>':"";
- const nextCoin=[50,150,300,600].find(x=>x>s.coins);if(nextCoin)html+='<div class="stat" style="margin-top:9px"><b>'+nextCoin+' 🪙</b><span>'+Math.max(0,nextCoin-s.coins)+' more coins to next real-life reward</span></div>';
- document.getElementById("nextRewards").innerHTML=html||'<div class="empty">All badges maxed. Champion.</div>';
-}
-function renderTrainer(){
- document.getElementById("tcLevel").textContent=level();document.getElementById("tcXP").textContent=s.xp;document.getElementById("tcCoins").textContent=s.coins;document.getElementById("tcStreak").textContent=s.longestStreak;document.getElementById("tcQuests").textContent=questsDone();document.getElementById("tcBadges").textContent=BADGES.filter(b=>badgeLevel(b.id)>=3).length;
- document.getElementById("journal").value=s.notes[today()]||"";
-}
-function render(){
- syncBadgeLevels();
- const l=level(),into=s.xp%100,st=streak();s.longestStreak=Math.max(s.longestStreak,st);
- document.getElementById("trainerName").textContent=s.name;document.getElementById("rank").textContent=rank();document.getElementById("level").textContent=l;document.getElementById("heroLevel").textContent=l;document.getElementById("totalXP").textContent=s.xp;document.getElementById("coins").textContent=s.coins;document.getElementById("streak").textContent=st+" days";
- document.getElementById("xpFill").style.width=into+"%";document.getElementById("xpText").textContent=into+" / 100 XP to next level";
- document.getElementById("badgeCount").textContent=BADGES.filter(b=>badgeLevel(b.id)>=3).length+" / 8";
- renderQuests();renderAllBadges();renderParty();renderCoat();renderItems();renderRewards();renderNextRewards();renderTrainer();
-}
-function esc(x){return String(x).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
-document.querySelectorAll("#nav button").forEach(b=>b.addEventListener("click",()=>show(b.dataset.page)));
-document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>show(b.dataset.go)));
-function show(p){document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));document.getElementById("page-"+p).classList.add("active");document.querySelectorAll("#nav button").forEach(x=>x.classList.toggle("active",x.dataset.page===p));scrollTo({top:0,behavior:"smooth"})}
+const SPR='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/';const KEY='russLeagueV3';
+const CORE=[['body','BODY','Complete a deliberate physical training, movement, mobility, or recovery session that supports your energy and long-term physical capacity.',['foundation']],['mind','MIND','Spend at least 30 focused minutes learning, studying, reading, researching, or developing a difficult intellectual skill.',['mind','dragon']],['future','FUTURE','Take one concrete action that moves an important academic, career, financial, creative, or long-term objective forward.',['dragon','crown']],['life','LIFE','Create, connect, explore, practice a hobby, or deliberately experience something meaningful rather than merely consuming time.',['life','voice']],['discipline','DISCIPLINE','Complete one important thing you committed to doing, especially when avoidance would have been easier.',['volt','dark']]];
+const BADGES=[['foundation','Foundation','🪨','Physical resilience, energy and self-maintenance.','Macho Brace','🥊'],['volt','Volt','⚡','Consistency, follow-through and reliable discipline.','Magnet','🧲'],['mind','Mind','🧠','Learning, intellectual depth and deliberate thinking.','Wise Glasses','👓'],['voice','Voice','🎤','Communication, expression and confident presence.','Microphone','🎙️'],['life','Life','🌿','Curiosity, relationships, creativity and lived experience.','Exp. Share','🌱'],['dark','Dark','🌑','Courage to confront avoidance, fear and difficult truths.','Black Glasses','🕶️'],['dragon','Dragon','🐉','Long-term mastery, difficult learning and ambitious projects.','Dragon Fang','🦷'],['crown','Crown','👑','Leadership, responsibility and ownership of outcomes.','King’s Rock','👑']];
+const P=[['Eevee','Umbreon','Stability','foundation',[[133,'Eevee',1],[197,'Umbreon',10]]],['Zorua','Zoroark','Adaptability','dark',[[570,'Zorua',1],[571,'Zoroark',12]]],['Sneasel','Weavile','Drive','volt',[[215,'Sneasel',1],[461,'Weavile',14]]],['Deino','Hydreigon','Curiosity & Ambition','mind',[[633,'Deino',1],[634,'Zweilous',16],[635,'Hydreigon',30]]],['Gible','Garchomp','Mastery','dragon',[[443,'Gible',1],[444,'Gabite',18],[445,'Garchomp',35]]],['Pawniard','Kingambit','Leadership', 'crown',[[624,'Pawniard',1],[625,'Bisharp',20],[983,'Kingambit',40]]]];
+const REW=[['Small Reward',50,'Snack, coffee, small hobby purchase, or guilt-free gaming session.'],['Good Reward',150,'Movie, meal out, book, or modest experience you genuinely value.'],['Rare Reward',300,'A meaningful purchase or experience chosen before you earn it.'],['Ultra Reward',600,'A substantial reward reserved for a substantial period of effort.']];
+const fresh=()=>({xp:0,coins:0,days:{},custom:[],badge:{},levels:{},items:[],goals:{},notes:{},longest:0,trainerId:'russ'});let s=Object.assign(fresh(),JSON.parse(localStorage.getItem(KEY)||'{}'));let month=new Date(new Date().getFullYear(),new Date().getMonth(),1);let cfg=JSON.parse(localStorage.getItem('russSync')||'{}');
+const qAll=()=>CORE.map(x=>({id:x[0],name:x[1],desc:x[2],xp:10,badges:x[3]})).concat(s.custom||[]);const daykey=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');const today=()=>daykey(new Date());const save=()=>{localStorage.setItem(KEY,JSON.stringify(s));if(cfg.url&&cfg.key)debounce()};let pt;const debounce=()=>{clearTimeout(pt);pt=setTimeout(push,1200)};const lvl=()=>Math.floor(s.xp/100)+1;const bl=id=>Math.min(3,Math.floor(Math.min(60,s.badge[id]||0)/20));const bp=id=>Math.min(60,s.badge[id]||0);const esc=x=>String(x??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+function toast(t){let x=document.getElementById('toast');x.textContent=t;x.classList.add('show');setTimeout(()=>x.classList.remove('show'),2200)}function streak(){let n=0,d=new Date();while((s.days[daykey(d)]&&qAll().some(q=>s.days[daykey(d)][q.id]))){n++;d.setDate(d.getDate()-1)}return n}function apply(q,on){let r=s.days[today()]||(s.days[today()]={});if(!!r[q.id]===on)return;r[q.id]=on;s.xp=Math.max(0,s.xp+(on?q.xp:-q.xp));for(let id of q.badges)s.badge[id]=Math.max(0,(s.badge[id]||0)+(on?1:-1));for(let b of BADGES){let old=s.levels[b[0]]||0,n=bl(b[0]);if(n>old){s.coins+=(n-old)*25;s.levels[b[0]]=n;if(n===3&&!s.items.includes(b[4]))s.items.push(b[4]);toast(b[1]+' Badge Level '+n+' reached • +25 coins')}}save();render()}
+function questHTML(q){let done=!!(s.days[today()]||{})[q.id];return `<label class="quest ${done?'done':''}"><input type="checkbox" ${done?'checked':''} data-q="${q.id}"><div class="q"><div class="qname">${esc(q.name)}</div><div class="qdesc">${esc(q.desc)}</div></div><div class="qxp">+${q.xp} XP</div></label>`}
+function renderQuests(){let h=qAll().map(questHTML).join('');for(let id of ['homequests','questlist']){let r=document.getElementById(id);r.innerHTML=h;r.querySelectorAll('[data-q]').forEach(x=>x.onchange=()=>apply(qAll().find(q=>q.id===x.dataset.q),x.checked))}let r=s.days[today()]||{};document.getElementById('today').innerHTML=CORE.map(q=>`<div class="todayrow"><span>${q[1]}</span><span class="ok">${r[q[0]]?'✓':''}</span></div>`).join('');document.getElementById('todaysummary').textContent=CORE.filter(q=>r[q[0]]).length+' / 5 core quests' }
+function badgeHTML(b){let p=bp(b[0]),l=bl(b[0]);return `<div class="badge ${l===3?'l3':''}"><div class="gem">${b[2]}</div><b>${b[1]} Badge</b><div class="bd">${b[3]}</div><div class="bp"><span>Level ${l}/3</span><span>${p}/60</span></div><div class="bar"><div class="bfill" style="width:${p/60*100}%"></div></div><div class="muted" style="margin-top:6px;color:var(--gold);font-weight:850">${l===3?'BADGE EARNED':l?'IN PROGRESS':'NOT STARTED'}</div></div>`}
+function renderBadges(){document.getElementById('homebadges').innerHTML=BADGES.map(badgeHTML).join('');document.getElementById('fullbadges').innerHTML=BADGES.map(badgeHTML).join('')}
+function pstage(p){let st=p[4][0];for(let x of p[4])if(lvl()>=x[2])st=x;return st}function partyHTML(){return P.map(p=>{let st=pstage(p),img=st[0],name=st[1],i=p[4].indexOf(st),next=p[4][i+1];return `<div class="poke"><div class="pokeimg"><img src="${SPR+img}.png" alt="${name}"></div><div class="pname">${name}</div><div class="stage">${i===p[4].length-1?'FINAL EVOLUTION':i?'EVOLVED':'STARTER'}</div><div class="role">${p[2]}</div><div class="muted">Trainer Lv ${lvl()}</div><div class="evo">${next?'Next: '+next[1]+' at Lv '+next[2]:'Fully evolved'}</div></div>`}).join('')}function renderParty(){let h=partyHTML();document.getElementById('homeparty').innerHTML=h;document.getElementById('fullparty').innerHTML=h;document.getElementById('evotable').innerHTML='<div class="muted">'+P.map(p=>p[2]+': '+p[4].map(x=>x[1]+' (Lv '+x[2]+')').join(' → ')).join('<br><br>')+'</div>'}
+function renderCoat(){let c=document.getElementById('crest');c.querySelectorAll('.cb').forEach(x=>x.remove());BADGES.forEach((b,i)=>{let e=document.createElement('div');e.className='cb c'+i+(bl(b[0])<3?' locked':'');e.textContent=b[2];c.appendChild(e)});let n=BADGES.filter(b=>bl(b[0])===3).length;document.getElementById('crestlabel').textContent=n+' / 8 badge pieces complete';document.getElementById('coatlist').innerHTML=BADGES.map(b=>`<div style="display:flex;justify-content:space-between;padding:8px;border-bottom:1px solid var(--line);font-size:12px"><span>${b[2]} ${b[1]}</span><b style="color:var(--gold)">Lv ${bl(b[0])}/3</b></div>`).join('')}
+function renderGoals(){let mk=month.getFullYear()+'-'+String(month.getMonth()+1).padStart(2,'0'),n=new Date(month.getFullYear(),month.getMonth()+1,0).getDate();document.getElementById('month').textContent=month.toLocaleString(undefined,{month:'long',year:'numeric'});let gs=Object.values(s.goals||{}).filter(g=>g.month===mk);document.getElementById('goallist').innerHTML=gs.length?gs.map(g=>{let done=Object.values(g.checks||{}).filter(Boolean).length,days='';for(let d=1;d<=n;d++){let k=mk+'-'+String(d).padStart(2,'0');days+=`<button class="day ${(g.checks||{})[k]?'done ':''}${today()===k?'today':''}" data-g="${g.id}" data-d="${k}">${d}</button>`}return `<div class="goal"><div class="goalhead"><div><div class="goalname">${esc(g.name)}</div><div class="goaldesc">${esc(g.desc)}</div></div><div><button class="btn" data-eg="${g.id}">Edit</button> <button class="btn danger" data-dg="${g.id}">Delete</button></div></div><div class="days">${days}</div><div class="goalfoot"><span>${done}/${n} days checked</span><span>${Math.round(done/n*100)}%</span></div></div>`}).join(''):'<div class="muted" style="padding:25px;text-align:center">No objectives for this month. Add as many as you need.</div>';document.querySelectorAll('[data-g]').forEach(x=>x.onclick=()=>{let g=s.goals[x.dataset.g];g.checks=g.checks||{};g.checks[x.dataset.d]=!g.checks[x.dataset.d];save();renderGoals();renderHomeGoals()});document.querySelectorAll('[data-eg]').forEach(x=>x.onclick=()=>goalModal(s.goals[x.dataset.eg]));document.querySelectorAll('[data-dg]').forEach(x=>x.onclick=()=>{if(confirm('Delete this objective and its monthly checks?')){delete s.goals[x.dataset.dg];save();renderGoals();renderHomeGoals()}})}
+function renderHomeGoals(){let mk=month.getFullYear()+'-'+String(month.getMonth()+1).padStart(2,'0'),n=new Date(month.getFullYear(),month.getMonth()+1,0).getDate(),gs=Object.values(s.goals||{}).filter(g=>g.month===mk).slice(0,4);document.getElementById('homegoals').innerHTML=gs.length?gs.map(g=>{let d=Object.values(g.checks||{}).filter(Boolean).length;return `<div class="statline" style="padding:9px 0;border-bottom:1px solid var(--line)"><span>${esc(g.name)}</span><b>${d}/${n}</b></div>`}).join(''):'<div class="muted">No objectives yet.</div>'}
+let modalFn=null;function modal(title,body,fn){document.getElementById('mtitle').textContent=title;document.getElementById('mbody').innerHTML=body;document.getElementById('modal').style.display='flex';modalFn=fn}document.getElementById('mcancel').onclick=()=>document.getElementById('modal').style.display='none';document.getElementById('msave').onclick=()=>{if(!modalFn||modalFn()!==false)document.getElementById('modal').style.display='none'};
+function goalModal(g){let current=g?.month||month.getFullYear()+'-'+String(month.getMonth()+1).padStart(2,'0');modal(g?'Edit Objective':'Add Monthly Objective',`<div class="form"><div class="field"><label>Objective title</label><input id="gn" value="${esc(g?.name||'')}" placeholder="e.g. Complete and submit my research chapter"></div><div class="field"><label>Detailed definition of success</label><textarea id="gd" placeholder="Describe exactly what must happen for this objective to count as complete.">${esc(g?.desc||'')}</textarea></div><div class="muted">Month: ${current}</div></div>`,()=>{let name=document.getElementById('gn').value.trim(),desc=document.getElementById('gd').value.trim();if(!name||!desc){toast('Give the objective a title and clear definition.');return false}let id=g?.id||'goal_'+Date.now();s.goals[id]={id,name,desc,month:current,checks:g?.checks||{}};save();renderGoals();renderHomeGoals()})}
+function questModal(){modal('Create Custom Quest',`<div class="form"><div class="field"><label>Quest name</label><input id="qn" placeholder="e.g. Complete 45 minutes of focused study"></div><div class="field"><label>Detailed completion standard</label><textarea id="qd" placeholder="Describe what genuinely counts as complete."></textarea></div><div class="field"><label>XP</label><input id="qx" type="number" min="5" max="50" value="10"></div><div class="field"><label>Contributes to these badges</label><div class="checks">${BADGES.map(b=>`<label><input type="checkbox" value="${b[0]}"> <span>${b[2]} <b>${b[1]}</b><br>${b[3]}</span></label>`).join('')}</div></div></div>`,()=>{let name=document.getElementById('qn').value.trim(),desc=document.getElementById('qd').value.trim(),xp=Math.max(5,Math.min(50,+document.getElementById('qx').value||10)),badges=[...document.querySelectorAll('.checks input:checked')].map(x=>x.value);if(!name||!desc||!badges.length){toast('Complete the name, description, and badge allocation.');return false}s.custom.push({id:'custom_'+Date.now(),name,desc,xp,badges});save();render()})}
+function renderItems(){document.getElementById('items').innerHTML=BADGES.map(b=>{let own=s.items.includes(b[4]);return `<div class="item" style="opacity:${own?1:.4}"><div class="itemicon">${b[5]}</div><div class="itemname">${b[4]}</div><div class="small">Badge reward. ${own?'OWNED':'Unlock at Badge Level 3'}</div></div>`}).join('')}
+function renderRewards(){document.getElementById('rewards').innerHTML=REW.map((r,i)=>`<div class="reward"><b>${r[0]}</b><div style="color:var(--gold);font-weight:900;margin:4px 0">${r[1]} 🪙</div><div class="small">${r[2]}</div><button class="btn primary" style="margin-top:10px" ${s.coins<r[1]?'disabled':''} data-r="${i}">Redeem</button></div>`).join('');document.querySelectorAll('[data-r]').forEach(x=>x.onclick=()=>{let r=REW[+x.dataset.r];if(s.coins>=r[1]){s.coins-=r[1];save();render();toast(r[0]+' redeemed.')}})}
+async function api(path,opt={}){let r=await fetch(cfg.url.replace(/\/$/,'')+'/rest/v1/'+path,{...opt,headers:{apikey:cfg.key,Authorization:'Bearer '+cfg.key,'Content-Type':'application/json',Prefer:'resolution=merge-duplicates,return=minimal',...(opt.headers||{})}});if(!r.ok)throw Error(await r.text());return r}async function push(){if(!cfg.url||!cfg.key)return;try{await api('trainer_saves?on_conflict=id',{method:'POST',body:JSON.stringify({id:s.trainerId||'russ',data:s,updated_at:new Date().toISOString()})});document.getElementById('syncstatus').textContent='Cloud synced • '+new Date().toLocaleTimeString();document.getElementById('syncstatus').className='online'}catch(e){document.getElementById('syncstatus').textContent='Sync error: check Supabase setup';document.getElementById('syncstatus').className='offline'}}async function pull(){if(!cfg.url||!cfg.key){toast('Connect Supabase first.');return}try{let r=await api('trainer_saves?id=eq.'+encodeURIComponent(s.trainerId||'russ'),{method:'GET'}),a=await r.json();if(!a.length){toast('No cloud save yet.');return}s=Object.assign(fresh(),a[0].data);localStorage.setItem(KEY,JSON.stringify(s));render();toast('Cloud save loaded.')}catch(e){toast('Could not pull cloud save.')}}
+function render(){let l=lvl(),st=streak();s.longest=Math.max(s.longest,st);document.getElementById('rank').textContent=l>=40?'CHAMPION':l>=25?'ELITE FOUR':l>=12?'ELITE TRAINER':'ROUTE 1 TRAINER';for(let id of ['level','heroLevel'])document.getElementById(id).textContent=l;document.getElementById('xp').textContent=s.xp;document.getElementById('coins').textContent=s.coins;document.getElementById('streak').textContent=st;document.getElementById('badgecount').textContent=BADGES.filter(b=>bl(b[0])===3).length+' / 8';document.getElementById('xpfill').style.width=s.xp%100+'%';document.getElementById('xptxt').textContent=s.xp%100+' / 100 XP';renderQuests();renderBadges();renderParty();renderCoat();renderItems();renderRewards();renderGoals();renderHomeGoals();document.getElementById('tcLevel').textContent=l;document.getElementById('tcXP').textContent=s.xp;document.getElementById('tcC').textContent=s.coins;document.getElementById('tcS').textContent=s.longest;document.getElementById('tcQ').textContent=Object.values(s.days).reduce((n,r)=>n+qAll().filter(q=>r[q.id]).length,0);document.getElementById('tcB').textContent=BADGES.filter(b=>bl(b[0])===3).length;document.getElementById('journal').value=s.notes[today()]||'';document.getElementById('surl').value=cfg.url||'';document.getElementById('skey').value=cfg.key||'';document.getElementById('tid').value=s.trainerId||'russ';document.getElementById('syncstatus').textContent=cfg.url&&cfg.key?'Configured':'Not connected';document.getElementById('syncstatus').className=cfg.url&&cfg.key?'online':'offline'}
 
-document.getElementById("addQuest").addEventListener("click",()=>{
- document.getElementById("badgeChecks").innerHTML=BADGES.map(b=>'<label style="display:block;margin:4px 0;font-size:11px"><input type="checkbox" value="'+b.id+'"> '+b.icon+' '+b.name+'</label>').join("");
- document.getElementById("modal").style.display="flex";
-});
-document.getElementById("cancel").addEventListener("click",()=>document.getElementById("modal").style.display="none");
-document.getElementById("create").addEventListener("click",()=>{
- const name=document.getElementById("newName").value.trim();if(!name){toast("Name the quest first.");return}
- const badges=[...document.querySelectorAll("#badgeChecks input:checked")].map(x=>x.value);
- if(!badges.length){toast("Choose at least one badge.");return}
- s.custom.push({id:"custom_"+Date.now(),name,desc:document.getElementById("newDesc").value.trim(),xp:Math.max(5,Math.min(50,Number(document.getElementById("newXP").value)||10)),badges});
- save();document.getElementById("modal").style.display="none";render();toast("Custom quest created.");
-});
-document.getElementById("journal").addEventListener("input",e=>{s.notes[today()]=e.target.value;save()});
-function exportSave(){const a=document.createElement("a"),url=URL.createObjectURL(new Blob([JSON.stringify(s,null,2)],{type:"application/json"}));a.href=url;a.download="russ-pokemon-league-save.json";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
-document.getElementById("export").addEventListener("click",exportSave);
-document.getElementById("import").addEventListener("click",()=>document.getElementById("file").click());
-document.getElementById("file").addEventListener("change",e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{const x=JSON.parse(rd.result);if(typeof x.xp!=="number")throw 0;s=Object.assign(blank(),x);save();render();toast("Save imported.")}catch(err){alert("Invalid save file.")}e.target.value=""};rd.readAsText(f)});
-render();
-</script>
-</body>
-</html>
+document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById('page-'+b.dataset.p).classList.add('active');document.querySelectorAll('#nav button').forEach(x=>x.classList.toggle('active',x===b));scrollTo(0,0)});document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>document.querySelector(`[data-p="${b.dataset.go}"]`).click());document.getElementById('addquest').onclick=questModal;document.getElementById('addgoal').onclick=()=>goalModal();document.getElementById('prev').onclick=()=>{month.setMonth(month.getMonth()-1);renderGoals();renderHomeGoals()};document.getElementById('next').onclick=()=>{month.setMonth(month.getMonth()+1);renderGoals();renderHomeGoals()};document.getElementById('journal').oninput=e=>{s.notes[today()]=e.target.value;save()};document.getElementById('connect').onclick=async()=>{cfg={url:document.getElementById('surl').value.trim(),key:document.getElementById('skey').value.trim()};s.trainerId=document.getElementById('tid').value.trim()||'russ';localStorage.setItem('russSync',JSON.stringify(cfg));save();await push()};document.getElementById('pull').onclick=pull;if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js');render();
+</script></body></html>
