@@ -1,24 +1,12 @@
-# Russ's Pokémon League FINAL V2
+# Russ's Pokémon League OS — V29
 
-Retro 2000s handheld/DS-inspired RPG UI.
+Retro Unova terminal-style personal RPG. V29 keeps the working V24 interface and adds independent randomized rival teams drawn from the official National Pokédex range (1–1025), plus a Refresh Rival control. Player and friend systems remain intact.
 
-Features:
-- compact pixel-inspired layout
-- custom CSS trainer sprite
-- SVG badge sprites, no emoji badge art
-- six Pokémon with runtime sprite evolution
-- parallel badge progression
-- unlimited monthly objectives with daily checkboxes
-- editable/deletable objectives
-- multi-badge quests
-- Supabase PC/phone sync
-- controlled Push/Pull sync flow
-- export/import local save
 
-Install:
-1. Replace the existing GitHub Pages files with all files in this folder.
-2. Wait for Pages deployment.
-3. Open the site in Incognito once to force the new service worker.
-4. Then reinstall the PWA on your phone if needed.
+V29: rival teams are assigned once and persist; DJ remains available when another rival is selected; header refresh reloads the entire app without rerolling teams.
 
-The Pokémon sprites load from the PokeAPI sprite repository at runtime.
+
+V34 PATCH: repaired the Journal Field Log so entries validate, save locally immediately, render without a page refresh, and enter the normal cloud-sync queue. Updated the service-worker cache version so deployed browsers receive the patch.
+
+
+V40 sprite consistency patch: player, rival, friend, and Pokédex Pokémon all use the same Gen V-style pixel sprite rendering and sizing.
